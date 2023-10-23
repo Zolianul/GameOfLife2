@@ -54,11 +54,10 @@ The Game of Life is a simulation that models the life cycle of cells in a popula
 1. **Resource Conflicts**:
    - Cells may compete for the same food unit. This requires synchronization to prevent multiple cells from accessing the same resource simultaneously.
 
-2. **Reproduction Conflicts**:
-   - Multiple cells may attempt to reproduce at the same time. This requires synchronization to ensure safe reproduction.
+2. **Reproduction/Death Conflicts**:
+   - Multiple cells may attempt to reproduce/die at the same time.
 
-3. **Population Changes**:
-   - Cells may be born or die dynamically. Managing the population list requires thread-safe data structures.
+
 
 ## Proposed Java Architecture
 
