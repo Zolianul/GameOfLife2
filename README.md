@@ -34,10 +34,7 @@ The Game of Life is a simulation that models the life cycle of cells in a popula
    - Attributes: Food units, List of living cells.
    - Methods: `addCell(Cell cell)`, `removeCell(Cell cell)`, `updateTime()`.
    
-3. **Simulation Class**:
-   - Manages the simulation process.
-   - Contains the main loop where cells interact with the environment.
-   - Methods: `start()`, `stop()`.
+
 
 ## Threads
 
@@ -55,7 +52,7 @@ The Game of Life is a simulation that models the life cycle of cells in a popula
    - Cells may compete for the same food unit. This requires synchronization to prevent multiple cells from accessing the same resource simultaneously.
 
 2. **Reproduction/Death Conflicts**:
-   - Multiple cells may attempt to reproduce/die at the same time.
+   - Multiple cells may attempt to reproduce/die at the same time so the total count of cells should be updated accordingly.
 
 
 
@@ -64,7 +61,7 @@ The Game of Life is a simulation that models the life cycle of cells in a popula
 ### Modules
 
 1. **Core Module**:
-   - Contains the `Cell`, `Environment`, and `Simulation` classes.
+   - Contains the `Cell`, `Environment` classes.
 
 2. **Main Module**:
    - Contains the `Main` class which serves as the entry point of the program.
@@ -81,10 +78,7 @@ The Game of Life is a simulation that models the life cycle of cells in a popula
   - Methods: `addCell(Cell cell)`, `removeCell(Cell cell)`, `updateTime()`.
   - Extends `Thread`.
 
-- **Simulation Class**:
-  - Manages the simulation process.
-  - Contains the main loop where cells interact with the environment.
-  - Methods: `start()`, `stop()`.
+
 
 ### Interactions
 
@@ -97,17 +91,3 @@ The Game of Life is a simulation that models the life cycle of cells in a popula
   - Provide food units.
   - Monitor reproduction conditions.
   - Manage population changes.
-
-### Entry Point
-
-The `Main` class in the Main Module serves as the entry point. It initializes the environment, creates the initial population of cells, and starts the simulation.
-
-## Simulation Flow
-
-1. Initialize environment and create initial cell population.
-2. Start the environment thread.
-3. Start the simulation loop in the Simulation thread.
-4. Cells interact with the environment.
-5. Environment updates time and resource availability.
-6. Monitor conditions for reproduction and starvation.
-7. Repeat steps 4-6 until simulation is stopped.
