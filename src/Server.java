@@ -1,13 +1,15 @@
 import java.io.*;
 import java.net.*;
-import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Server {
     public static void main(String[] args) {
         final int PORT = 5000;
         List<PrintWriter> clientWriters = new ArrayList<>();
+        Map<String, PrintWriter> clientWritersMap = new HashMap<>();
 
         try {
             ServerSocket serverSocket = new ServerSocket(PORT);
@@ -20,7 +22,7 @@ public class Server {
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                 clientWriters.add(out);
 
-                Thread clientHandler = new Thread(new ClientHandler(clientSocket, out, clientWriters));
+                Thread clientHandler = new Thread(new ClientHandler(clientSocket, out, clientWriters, clientWritersMap));
                 clientHandler.start();
             }
         } catch (IOException e) {
@@ -33,39 +35,53 @@ class ClientHandler implements Runnable {
     private Socket clientSocket;
     private PrintWriter out;
     private List<PrintWriter> clientWriters;
-    private String username; // Add username field
+    private Map<String, PrintWriter> clientWritersMap;
 
-    public ClientHandler(Socket socket, PrintWriter out, List<PrintWriter> clientWriters) {
+    public ClientHandler(Socket socket, PrintWriter out, List<PrintWriter> clientWriters, Map<String, PrintWriter> clientWritersMap) {
         this.clientSocket = socket;
         this.out = out;
         this.clientWriters = clientWriters;
+        this.clientWritersMap = clientWritersMap;
     }
 
     @Override
     public void run() {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            String msg;
+            String username = in.readLine();
+            clientWritersMap.put(username, out);
 
             while (true) {
-                msg = in.readLine();
+                String msg = in.readLine();
                 if (msg == null) {
                     break; // Client disconnected
                 }
 
-                // Broadcast the message to all connected clients except the sender
-                for (PrintWriter writer : clientWriters) {
-                    if (writer != out) {
-                        writer.println(msg);
+                if (msg.startsWith("@")) {
+                    String[] parts = msg.split(" ", 2);
+                    if (parts.length == 2) {
+                        String recipient = parts[0].substring(1);
+                        sendPrivateMessage(username, recipient, parts[1]);
+                    }
+                } else {
+                    for (PrintWriter writer : clientWriters) {
+                        writer.println(username + ": " + msg);
                     }
                 }
             }
 
-            // Client disconnected, remove its PrintWriter
+            clientWritersMap.remove(username);
             clientWriters.remove(out);
             clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void sendPrivateMessage(String sender, String recipient, String message) {
+        PrintWriter recipientWriter = clientWritersMap.get(recipient);
+        if (recipientWriter != null) {
+            recipientWriter.println(sender + " (private to " + recipient + "): " + message);
         }
     }
 }
