@@ -3,7 +3,7 @@
 ### Classes and their Responsibilities:
 
 1. **Message**:
-    - Contains fields for content, header (with recipient or type information), and a timeout.
+    - Contains fields for content, header (with recipient or topic information).
     - Contains methods to get and set these fields.
   
 2. **QueueMessage extends Message**:
@@ -48,26 +48,29 @@ Concurrency Problems:
 
 ### Proposed Java Architecture:
 
-1. **Use `ReentrantLock` and `Condition`**:
-    - Use a `ReentrantLock` to synchronize access to the MessageQueue and Topic.
-    - Use `Condition` for handling cases where a consumer might need to wait for a message to be available.
-  
-2. **Java ExecutorService**: To manage threads efficiently, use Java's `ExecutorService`. It offers a higher-level replacement for the traditional way of managing threads and provides a clean and efficient way to handle concurrency.
+1.**Server**:
+The server component is the core of the architecture, responsible for accepting incoming connections, managing message resources, and performing administrative tasks.
+It uses the ServerSocket to listen for incoming client connections.
+Multithreading is employed to handle multiple client connections simultaneously.
 
-3. **ScheduledExecutorService**: Use this for the Cleanup Thread to periodically check and remove expired messages.
+2.**Client**:
+Clients represent individual applications or users that connect to the server to send and receive messages.
+The code for clients can be embedded in various applications to facilitate communication.
 
-4. **Java NIO for Networking**: If you're considering making this server network-enabled, Java NIO (or Netty, a popular NIO-based framework) can be used for scalable and efficient networking.
+3.**Message Queues and Topics**:
+Message resources, including message queues and topics, are maintained by the server to organize and distribute messages effectively.
+Message Queues ensure that messages are delivered to their intended recipients following a First-In-First-Out (FIFO) order.
+Topics provide a publish-subscribe model for message distribution, categorizing messages by their types.
 
-5. **Observer Pattern for Topics**: Since topics are essentially a publish-subscribe model, use the Observer pattern. When a new message of a particular type is published, all subscribed clients are notified.
-
-6. **Configuration**: To allow for administration and customization, have a configuration system. This could be a properties file or a more advanced configuration management system.
+4.**ClientHandler**:
+The ClientHandler class is responsible for managing individual client connections.
+It handles communication with clients through Socket connections and manages message sending and reception using PrintWriter and BufferedReader.
+The class also maintains data structures for message history and processes !history commands.
 
 ### Additional Suggestions:
 
-1. **Persistence**: Consider adding a persistence layer (like a database) to store messages, especially if you need durability and reliability. 
+1. **Persistence**: Consider adding a persistence layer (like a database) to store messages. 
 
-2. **Logging**: Integrate a robust logging system like SLF4J with Logback to track server operations, errors, and client activities.
+2. **Logging**: Integrate a logging system.
 
-3. **Metrics & Monitoring**: Integrate metrics collection libraries like Micrometer or Dropwizard Metrics to monitor the server's health, performance, and other vital statistics.
 
-This is a high-level overview and would need to be refined and detailed further based on exact requirements, scalability needs, fault tolerance, etc.
