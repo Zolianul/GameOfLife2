@@ -1,33 +1,42 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class MessagingServerTest {
-
     public static void main(String[] args) {
-        MessageServer server = new MessageServer(1); // Set queue size to 2
+        MessageServer server = new MessageServer(10);
+        List<Client> clients = new ArrayList<>(); // Create a list to store clients
 
-        // Create multiple clients (more than the queue size)
-        for (int i = 0; i < 5; i++) {
-            Client client = new Client(server.getMessageQueue(), server.getTopic());
-            int finalI = i;
+        for (int i = 0; i < 50; ++i) {
+            Client client = new Client(server.getTopic());
+            MessageQueue clientQueue = new MessageQueue(10); // Specify the capacity for each client queue
+            client.addPersonalQueue(clientQueue);
+            clients.add(client); // Add the client to the list
+
+            final int currentI = i; // Creating a final copy of i
+
             Thread clientThread = new Thread(() -> {
-                QueueMessage message = new QueueMessage("Message from client " + finalI, "Recipient");
-                client.sendMessageToQueue(message);
+                QueueMessage message = new QueueMessage("Message from client " + currentI, "Recipient");
+                client.sendMessageToPersonalQueue(message, clientQueue);
             });
-
             clientThread.start();
         }
 
-        // Optionally, add a thread to simulate consuming messages from the queue
-        new Thread(() -> {
+        // Thread to consume messages from the client queues after 5 seconds
+        Thread consumeMessages = new Thread(() -> {
             try {
-                // Simulate a delay before starting to consume messages
                 Thread.sleep(5000);
-                for (int i = 0; i < 5; i++) {
-                    int finalI2 = i;
-                    server.getMessageQueue().getMessageForRecipient("Recipient");
-                    Thread.sleep(1000); // Simulate time taken to process each message
+
+                for (Client client : clients) {
+                    MessageQueue clientQueue = client.getPersonalQueues().get(0); // Assuming only one queue per client for simplicity
+                    Message message = client.receiveMessageFromPersonalQueue("Recipient", clientQueue);
+                    if (message != null) {
+                        System.out.println("Message consumed: " + message.getContent());
+                    }
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-        }).start();
+        });
+        consumeMessages.start();
     }
 }
