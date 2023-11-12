@@ -1,39 +1,42 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Topic {
-    private List<TopicMessage> messages;
+    private List<TopicMessage> messages = new ArrayList<>();
+    private final ReentrantLock lock = new ReentrantLock();
 
-    public Topic() {
-        this.messages = new ArrayList<>();
+    public void addMessage(TopicMessage message) {
+        lock.lock();
+        try {
+            messages.add(message);
+        } finally {
+            lock.unlock();
+        }
     }
 
-    public List<TopicMessage> getMessages() {
-        return messages;
+    public List<TopicMessage> getMessageOfType(String type) {
+        lock.lock();
+        try {
+            List<TopicMessage> filteredMessages = new ArrayList<>();
+            for (TopicMessage message : messages) {
+                if (message.getType().equals(type)) {
+                    filteredMessages.add(message);
+                }
+            }
+            return filteredMessages;
+        } finally {
+            lock.unlock();
+        }
     }
 
-    public void setMessages(List<TopicMessage> messages) {
-        this.messages = messages;
+    public void removeExpiredMessages() {
+        lock.lock();
+        try {
+            messages.removeIf(TopicMessage::isExpired);
+        } finally {
+            lock.unlock();
+        }
     }
-
-    // Synchronized method to add a message to the topic
-    public synchronized void addMessage(TopicMessage message) {
-        this.messages.add(message);
-    }
-
-    // Synchronized method to get messages by type
-    public synchronized List<TopicMessage> getMessageOfType(String type) {
-        return messages.stream()
-                .filter(message -> message.getType().equals(type))
-                .collect(Collectors.toList());
-    }
-
-    // This could be called by a cleanup thread or some expiration policy mechanism
-    public synchronized void removeExpiredMessages() {
-        messages.removeIf(TopicMessage::isExpired);
-    }
-
-    // ... Other methods such as getting all messages or messages by other criteria
 }
-

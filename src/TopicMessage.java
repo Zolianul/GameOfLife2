@@ -1,5 +1,6 @@
 import java.time.Instant;
 import java.time.Duration;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class TopicMessage extends Message {
     private final String type;
@@ -29,5 +30,25 @@ public class TopicMessage extends Message {
 
     public Duration getTtl() {
         return ttl;
+    }
+    private final ReentrantLock lock = new ReentrantLock();
+
+    // Add new methods to set and get the content for TopicMessage
+    public String getContent() {
+        lock.lock();
+        try {
+            return super.getContent();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void setContent(String content) {
+        lock.lock();
+        try {
+            super.setContent(content);
+        } finally {
+            lock.unlock();
+        }
     }
 }
