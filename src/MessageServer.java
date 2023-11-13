@@ -13,6 +13,5 @@ public class MessageServer {
     public Topic getTopic() {
         return topic;
     }
-    // Methods to route messages to the queue or topic,
-    // and perform other administrative tasks
+
 }

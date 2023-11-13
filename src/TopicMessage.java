@@ -8,7 +8,7 @@ public class TopicMessage extends Message {
     private final Duration ttl; // Time to live for the message
 
     public TopicMessage(String content,String header, String type, Duration ttl) {
-        super(content,header); // Assuming the superclass Message handles content
+        super(content,header);
         this.type = type;
         this.timestamp = Instant.now();
         this.ttl = ttl;
@@ -33,7 +33,7 @@ public class TopicMessage extends Message {
     }
     private final ReentrantLock lock = new ReentrantLock();
 
-    // Add new methods to set and get the content for TopicMessage
+
     public String getContent() {
         lock.lock();
         try {

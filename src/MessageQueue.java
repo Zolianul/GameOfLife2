@@ -23,10 +23,10 @@ public class MessageQueue {
         lock.lock();
         try {
             while (this.queue.size() == this.maxSize) {
-                notFull.await(); // Block when the queue is full
+                notFull.await();
             }
             this.queue.add(message);
-            notEmpty.signal(); // Signal that the queue is not empty
+            notEmpty.signal();
         } finally {
             lock.unlock();
         }
@@ -36,7 +36,7 @@ public class MessageQueue {
         lock.lock();
         try {
             while (this.queue.isEmpty()) {
-                notEmpty.await(); // Block when the queue is empty
+                notEmpty.await();
             }
 
             QueueMessage messageToReturn = null;
@@ -46,7 +46,7 @@ public class MessageQueue {
                 if (message.getRecipient().equals(recipient)) {
                     messageToReturn = message;
                     iterator.remove();
-                    notFull.signal(); // Signal that the queue is not full
+                    notFull.signal();
                     System.out.println("Message received from recipient " + recipient + ": " + messageToReturn.getContent());
                     break;
                 }
