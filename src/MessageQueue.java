@@ -1,3 +1,4 @@
+import com.rabbitmq.client.Channel;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -10,25 +11,41 @@ public class MessageQueue {
     private final ReentrantLock lock;
     private final Condition notFull;
     private final Condition notEmpty;
+    private final Channel channel;
+    private final String exchangeName = "broadcast_exchange"; // Set your exchange name
 
-    public MessageQueue(int maxSize) {
+
+    public MessageQueue(int maxSize, Channel channel) {
         this.maxSize = maxSize;
         this.queue = new LinkedList<>();
         this.lock = new ReentrantLock();
         this.notFull = this.lock.newCondition();
         this.notEmpty = this.lock.newCondition();
+        this.channel = channel; // RabbitMQ channel
+
     }
 
     public void addMessage(QueueMessage message) throws InterruptedException {
         lock.lock();
         try {
             while (this.queue.size() == this.maxSize) {
-                notFull.await();
+                notFull.await(); // Block when the queue is full
             }
             this.queue.add(message);
+            publishToRabbitMQ(message); // Publish message to RabbitMQ
             notEmpty.signal();
         } finally {
             lock.unlock();
+        }
+    }
+
+    private void publishToRabbitMQ(QueueMessage message) {
+        try {
+            String messageContent = message.getContent(); // Assuming your message has a getContent() method
+            channel.basicPublish(exchangeName, "", null, messageContent.getBytes());
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -56,5 +73,4 @@ public class MessageQueue {
             lock.unlock();
         }
     }
-
 }

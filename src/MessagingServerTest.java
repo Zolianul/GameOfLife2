@@ -1,24 +1,35 @@
 import java.time.Duration;
 
 public class MessagingServerTest {
-    public static void main(String[] args) {
-        testTopic();
-        testMessageQueue();
 
+    public static void main(String[] args) {
+        testTopic(7,"Romania","Countries");
+        testTopic(17,"UPT","Faculties");
+        testTopic(27,"CEBP","Courses");// Test the Topic and TopicMessage functionality
+        testMessageQueue(3,"Romania"); // Test the MessageQueue functionality
+        testMessageQueue(5,"UPT");
+        testMessageQueue(10,"CEBP");
     }
 
-    private static void testTopic() {
+    private static void testTopic(Integer NoOfHashtag,String Hashtag, String TopicType) {
         MessageServer server = new MessageServer(10);
         System.out.println("TOPIC FUNCTIONALITY TEST");
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < NoOfHashtag; i++) {
             final int messageIndex = i;
             Thread messageThread = new Thread(() -> {
-                TopicMessage message = new TopicMessage("Topic message " + (messageIndex + 1), "Header", "Type", Duration.ofSeconds(10));
+                TopicMessage message = new TopicMessage("Topic message " + (messageIndex + 1)+"with hashtag <#"+Hashtag+">.", "Header", TopicType, Duration.ofSeconds(20));
                 server.getTopic().addMessage(message);
                 System.out.println("Added message to topic: " + message.getContent());
             });
             messageThread.start();
+
+
+            try {
+                Thread.sleep(2000); // 100 milliseconds delay
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         // Simulate removing expired messages from the topic
@@ -33,7 +44,7 @@ public class MessagingServerTest {
         });
         expirationThread.start();
 
-
+        // Sleep added to give time for messages to be processed and printed
         try {
             Thread.sleep(20000);
         } catch (InterruptedException e) {
@@ -41,17 +52,17 @@ public class MessagingServerTest {
         }
     }
 
-    private static void testMessageQueue() {
+    private static void testMessageQueue(Integer NoOfHashtag,String Hashtag) {
         MessageServer server = new MessageServer(10);
 
         System.out.println("PRIVATE MESSAGE FUNCTIONALITY TEST");
 
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < NoOfHashtag; i++) {
             Client client = new Client(server.getMessageQueue(), server.getTopic());
             int finalI = i;
             Thread clientThread = new Thread(() -> {
-                QueueMessage message = new QueueMessage("Message from client " + finalI, "Recipient");
+                QueueMessage message = new QueueMessage("Message with hashtag <#"+Hashtag+">sent from client " + finalI, "Recipient");
                 client.sendMessageToQueue(message);
             });
 
@@ -61,7 +72,7 @@ public class MessagingServerTest {
 
         new Thread(() -> {
             try {
-                for (int i = 0; i < 20; i++) {
+                for (int i = 0; i < NoOfHashtag ; i++) {
                     server.getMessageQueue().getMessageForRecipient("Recipient");
                     Thread.sleep(1000);
                 }
