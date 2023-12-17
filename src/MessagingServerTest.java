@@ -2,11 +2,11 @@ import java.time.Duration;
 
 public class MessagingServerTest {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) {// Test the TopicMessage the MessageQueue functionality
         testTopic(7,"Romania","Countries");
         testTopic(17,"UPT","Faculties");
-        testTopic(27,"CEBP","Courses");// Test the Topic and TopicMessage functionality
-        testMessageQueue(3,"Romania"); // Test the MessageQueue functionality
+        testTopic(27,"CEBP","Courses");
+        testMessageQueue(3,"Romania");
         testMessageQueue(5,"UPT");
         testMessageQueue(10,"CEBP");
     }
@@ -26,7 +26,7 @@ public class MessagingServerTest {
 
 
             try {
-                Thread.sleep(2000); // 100 milliseconds delay
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -35,7 +35,7 @@ public class MessagingServerTest {
         // Simulate removing expired messages from the topic
         Thread expirationThread = new Thread(() -> {
             try {
-                Thread.sleep(5000); // Adding a sleep duration for the test
+                Thread.sleep(5000);
                 server.getTopic().removeExpiredMessages();
                 System.out.println("Expired messages removed from the topic.");
             } catch (InterruptedException e) {

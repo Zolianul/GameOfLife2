@@ -27,8 +27,8 @@ public class Topic {
     private void publishToRabbitMQ(TopicMessage message) {
         try {
             if (!message.isExpired()) {
-                String messageContent = message.getContent(); // Assuming your message has a getContent() method
-                String routingKey = routingKeyBase+message.getType(); // Using message type as routing key
+                String messageContent = message.getContent();
+                String routingKey = routingKeyBase+message.getType();
                 channel.basicPublish(exchangeName, routingKey, null, messageContent.getBytes());
                 System.out.println("Published message to topic: " + routingKey);
             }

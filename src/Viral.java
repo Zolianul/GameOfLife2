@@ -37,11 +37,11 @@ public class Viral {
         String broadcastQueueName = channel.queueDeclare().getQueue();
         channel.queueBind(broadcastQueueName, broadcastExchangeName, "");
 
-        channel.exchangeDeclare(broadcastExchangeName, BuiltinExchangeType.FANOUT,true); // Ensure this is set to FANOUT
+        channel.exchangeDeclare(broadcastExchangeName, BuiltinExchangeType.FANOUT,true);
         String topicQueueName = channel.queueDeclare().getQueue();
         channel.queueBind(topicQueueName, topicExchangeName, "");
 
-        channel.exchangeDeclare(topicExchangeName, BuiltinExchangeType.FANOUT,true); // Ensure this is set to FANOUT
+        channel.exchangeDeclare(topicExchangeName, BuiltinExchangeType.FANOUT,true);
 
         Consumer broadcastConsumer = createBroadcastConsumer();
         Consumer topicConsumer = createTopicConsumer();
@@ -116,7 +116,7 @@ public class Viral {
             }
         } catch (TimeoutException e) {
             e.printStackTrace();
-            throw e; // Rethrow TimeoutException or handle it accordingly
+            throw e;
         }
     }
 
@@ -126,9 +126,11 @@ public class Viral {
             viral.startListening();
 
             // Allow the service to listen for messages for some time
-            Thread.sleep(200000); // Adjust the duration as needed
-
+            Thread.sleep(10000);
+            for (int i = 0; i < 50; i++){
             viral.displayTrendingHashtags();
+                System.out.println("-----------\n\n");
+                Thread.sleep(5000);}
             viral.closeConnection();
         } catch (Exception e) {
             e.printStackTrace();

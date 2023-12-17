@@ -1,6 +1,6 @@
 public class Message {
     protected String content;
-    protected String header; // Header can be recipient or topic information
+    protected String header;
 
     public Message(String content, String header) {
         this.content = content;
