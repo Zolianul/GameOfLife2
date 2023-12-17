@@ -2,31 +2,31 @@ import java.time.Duration;
 
 public class MessagingServerTest {
 
-    public static void main(String[] args) {// Test the TopicMessage the MessageQueue functionality
+    public static void main(String[] args) {
         testTopic(7,"Romania","Countries");
         testTopic(17,"UPT","Faculties");
-        testTopic(27,"CEBP","Courses");
-        testMessageQueue(3,"Romania");
+        testTopic(27,"CEBP","Courses");// Test the Topic and TopicMessage functionality
+        testMessageQueue(3,"Romania"); // Test the MessageQueue functionality
         testMessageQueue(5,"UPT");
         testMessageQueue(10,"CEBP");
     }
 
-    private static void testTopic(Integer NoOfHashtag,String Hashtag, String TopicType) {
+    private static void testTopic(Integer NoOfHashtag, String Hashtag, String TopicType) {
         MessageServer server = new MessageServer(10);
         System.out.println("TOPIC FUNCTIONALITY TEST");
 
         for (int i = 0; i < NoOfHashtag; i++) {
             final int messageIndex = i;
             Thread messageThread = new Thread(() -> {
-                TopicMessage message = new TopicMessage("Topic message " + (messageIndex + 1)+"with hashtag <#"+Hashtag+">.", "Header", TopicType, Duration.ofSeconds(20));
+                // Reducing TTL to 5 seconds for quicker expiration
+                TopicMessage message = new TopicMessage("Topic message " + (messageIndex + 1) + " with hashtag <#" + Hashtag + ">.", "Header", TopicType, Duration.ofSeconds(5));
                 server.getTopic().addMessage(message);
                 System.out.println("Added message to topic: " + message.getContent());
             });
             messageThread.start();
 
-
             try {
-                Thread.sleep(2000);
+                Thread.sleep(2000); // 2-second delay between message sends
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -35,9 +35,8 @@ public class MessagingServerTest {
         // Simulate removing expired messages from the topic
         Thread expirationThread = new Thread(() -> {
             try {
-                Thread.sleep(5000);
+                Thread.sleep(10000); // Wait 10 seconds before removing expired messages
                 server.getTopic().removeExpiredMessages();
-                System.out.println("Expired messages removed from the topic.");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -46,7 +45,7 @@ public class MessagingServerTest {
 
         // Sleep added to give time for messages to be processed and printed
         try {
-            Thread.sleep(20000);
+            Thread.sleep(20000); // Wait for all operations to complete
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

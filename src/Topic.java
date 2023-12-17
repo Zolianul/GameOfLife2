@@ -27,8 +27,8 @@ public class Topic {
     private void publishToRabbitMQ(TopicMessage message) {
         try {
             if (!message.isExpired()) {
-                String messageContent = message.getContent();
-                String routingKey = routingKeyBase+message.getType();
+                String messageContent = message.getContent(); // Assuming your message has a getContent() method
+                String routingKey = routingKeyBase+message.getType(); // Using message type as routing key
                 channel.basicPublish(exchangeName, routingKey, null, messageContent.getBytes());
                 System.out.println("Published message to topic: " + routingKey);
             }
@@ -54,8 +54,14 @@ public class Topic {
 
     public void removeExpiredMessages() {
         lock.lock();
+        long expiredCount = 0;
         try {
+            // Count the expired messages
+            expiredCount = messages.stream().filter(TopicMessage::isExpired).count();
             messages.removeIf(TopicMessage::isExpired);
+
+            // Print the number of messages removed
+            System.out.println(expiredCount + " expired messages removed from the topic.");
         } finally {
             lock.unlock();
         }
