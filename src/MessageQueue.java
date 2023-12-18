@@ -12,7 +12,7 @@ public class MessageQueue {
     private final Condition notFull;
     private final Condition notEmpty;
     private final Channel channel;
-    private final String exchangeName = "broadcast_exchange";
+    private final String exchangeName = "broadcast_exchange"; // RabbitMQ exchange name
 
 
     public MessageQueue(int maxSize, Channel channel) {
@@ -29,7 +29,7 @@ public class MessageQueue {
         lock.lock();
         try {
             while (this.queue.size() == this.maxSize) {
-                notFull.await();
+                notFull.await(); // Block when the queue is full
             }
             this.queue.add(message);
             publishToRabbitMQ(message); // Publish message to RabbitMQ

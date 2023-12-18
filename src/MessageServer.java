@@ -10,22 +10,24 @@ public class MessageServer {
 
 
     public MessageServer(int queueLimit) {
+        // Initialize RabbitMQ connection
+        initializeRabbitMQ();
 
-        initializeRabbitMQ(); // Initialize RabbitMQ connection
-
-        this.messageQueue = new MessageQueue(queueLimit, channel);// Initialize MessageQueue and Topic with the RabbitMQ channel
+        // Initialize MessageQueue and Topic with the RabbitMQ channel
+        this.messageQueue = new MessageQueue(queueLimit, channel);
         this.topic = new Topic(channel);
     }
 
     private void initializeRabbitMQ() {
         try {
             ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost("localhost"); // Set RabbitMQ server address
-            factory.setUsername("guest");// Set username and password
+            factory.setHost("localhost");
+            factory.setUsername("guest");
             factory.setPassword("guest");
 
             this.connection = factory.newConnection();
             this.channel = connection.createChannel();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -40,7 +42,7 @@ public class MessageServer {
     }
 
 
-    public void stop() {       // close RabbitMQ connection when the server is stopped
+    public void stop() { // Ensure to close RabbitMQ connection when the server is stopped
         try {
             if (channel != null && channel.isOpen()) {
                 channel.close();

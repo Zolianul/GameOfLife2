@@ -3,12 +3,12 @@ import java.time.Duration;
 public class MessagingServerTest {
 
     public static void main(String[] args) {
-        testTopic(7,"Romania","Countries");
-        testTopic(17,"UPT","Faculties");
-        testTopic(27,"CEBP","Courses");// Test the Topic and TopicMessage functionality
-        testMessageQueue(3,"Romania"); // Test the MessageQueue functionality
-        testMessageQueue(5,"UPT");
-        testMessageQueue(10,"CEBP");
+        testTopic(7,"Romania_Topic","Countries");// Test the Topic and TopicMessage functionality
+        testTopic(17,"UPT_Topic","Faculties");
+        testTopic(27,"CEBP_Topic","Courses");
+        testMessageQueue(3,"Romania_Broadcast"); // Test the MessageQueue functionality
+        testMessageQueue(5,"UPT_Broadcast");
+        testMessageQueue(10,"CEBP_Broadcast");
     }
 
     private static void testTopic(Integer NoOfHashtag, String Hashtag, String TopicType) {

@@ -26,7 +26,7 @@ public class Viral {
             allTopicHashtags = new HashMap<>();
         } catch (IOException | TimeoutException e) {
             e.printStackTrace();
-            // Handle the exception as needed
+
         }
     }
 
@@ -34,21 +34,22 @@ public class Viral {
         String broadcastExchangeName = "broadcast_exchange";
         String topicExchangeName = "topic_exchange";
 
-        String broadcastQueueName = channel.queueDeclare().getQueue();
-        channel.queueBind(broadcastQueueName, broadcastExchangeName, "");
 
-        channel.exchangeDeclare(broadcastExchangeName, BuiltinExchangeType.FANOUT,true);
-        String topicQueueName = channel.queueDeclare().getQueue();
-        channel.queueBind(topicQueueName, topicExchangeName, "");
+        String broadcastQueueName = "broadcast_queue";
+        String topicQueueName = "topic_queue";
 
-        channel.exchangeDeclare(topicExchangeName, BuiltinExchangeType.FANOUT,true);
+        channel.exchangeDeclare(broadcastExchangeName, BuiltinExchangeType.FANOUT, true);
+        channel.exchangeDeclare(topicExchangeName, BuiltinExchangeType.TOPIC, true);
+
 
         Consumer broadcastConsumer = createBroadcastConsumer();
         Consumer topicConsumer = createTopicConsumer();
 
+        // Start consuming messages from the specific queues
         channel.basicConsume(broadcastQueueName, true, broadcastConsumer);
         channel.basicConsume(topicQueueName, true, topicConsumer);
     }
+
 
     private Consumer createBroadcastConsumer() {
         return new DefaultConsumer(channel) {
@@ -125,10 +126,10 @@ public class Viral {
             Viral viral = new Viral();
             viral.startListening();
 
-            // Allow the service to listen for messages for some time
+
             Thread.sleep(10000);
             for (int i = 0; i < 50; i++){
-            viral.displayTrendingHashtags();
+                viral.displayTrendingHashtags();
                 System.out.println("-----------\n\n");
                 Thread.sleep(5000);}
             viral.closeConnection();

@@ -14,7 +14,7 @@ public class TopicMessage extends Message {
         this.ttl = ttl;
     }
 
-
+    // Checks if the message is expired based on its TTL
     public boolean isExpired() {
         return Instant.now().isAfter(timestamp.plus(ttl));
     }
