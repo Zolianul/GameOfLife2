@@ -9,7 +9,7 @@ public class Topic {
     private Channel channel;
     private final String exchangeName= "topic_exchange"; // RabbitMQ exchange name
 
-    private final String routingKeyBase = "topic.";
+    private final String routingKeyBase = "topic."; //Routing key for the topic_exchange
     public Topic(Channel channel) {
         this.channel = channel;
     }
@@ -37,22 +37,9 @@ public class Topic {
         }
     }
 
-    public List<TopicMessage> getMessageOfType(String type) {
-        lock.lock();
-        try {
-            List<TopicMessage> filteredMessages = new ArrayList<>();
-            for (TopicMessage message : messages) {
-                if (message.getType().equals(type)) {
-                    filteredMessages.add(message);
-                }
-            }
-            return filteredMessages;
-        } finally {
-            lock.unlock();
-        }
-    }
 
-    public void removeExpiredMessages() {
+
+    public void removeExpiredMessages() {//Method for removing expired msg
         lock.lock();
         long expiredCount = 0;
         try {
@@ -66,4 +53,20 @@ public class Topic {
             lock.unlock();
         }
     }
+
+    /*
+    *   public List<TopicMessage> getMessageOfType(String type) {
+        lock.lock();
+        try {
+            List<TopicMessage> filteredMessages = new ArrayList<>();
+            for (TopicMessage message : messages) {
+                if (message.getType().equals(type)) {
+                    filteredMessages.add(message);
+                }
+            }
+            return filteredMessages;
+        } finally {
+            lock.unlock();
+        }
+    }*/
 }

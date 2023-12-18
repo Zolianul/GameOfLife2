@@ -6,11 +6,11 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class MessageQueue {
-    private final int maxSize;
-    private Queue<QueueMessage> queue;
-    private final ReentrantLock lock;
-    private final Condition notFull;
-    private final Condition notEmpty;
+    private final int maxSize; //Maximum nr. of msg allowed in the queue
+    private Queue<QueueMessage> queue; // The FIFO queue
+    private final ReentrantLock lock;  //For concurrency control
+    private final Condition notFull;  //Condition for checking if the queue is not full
+    private final Condition notEmpty; //Condition for checking if the queue is not empty
     private final Channel channel;
     private final String exchangeName = "broadcast_exchange"; // RabbitMQ exchange name
 
@@ -25,7 +25,7 @@ public class MessageQueue {
 
     }
 
-    public void addMessage(QueueMessage message) throws InterruptedException {
+    public void addMessage(QueueMessage message) throws InterruptedException { // Method for adding a message to queue and publishingg it to RabbitMq
         lock.lock();
         try {
             while (this.queue.size() == this.maxSize) {
@@ -39,7 +39,7 @@ public class MessageQueue {
         }
     }
 
-    private void publishToRabbitMQ(QueueMessage message) {
+    private void publishToRabbitMQ(QueueMessage message) {// Method for publishing the messages to the server. Sending the msg as strings
         try {
             String messageContent = message.getContent();
             channel.basicPublish(exchangeName, "", null, messageContent.getBytes());
@@ -49,7 +49,7 @@ public class MessageQueue {
         }
     }
 
-    public QueueMessage getMessageForRecipient(String recipient) throws InterruptedException {
+    public QueueMessage getMessageForRecipient(String recipient) throws InterruptedException { // Method for receiving msg from a user
         lock.lock();
         try {
             while (this.queue.isEmpty()) {

@@ -79,7 +79,7 @@ public class Viral {
         };
     }
 
-    private void processHashtags(String message, Map<String, Integer> hashtagMap) {
+    private void processHashtags(String message, Map<String, Integer> hashtagMap) { //Method for extracting the hashtags
         Pattern pattern = Pattern.compile("#(\\w+)");
         Matcher matcher = pattern.matcher(message);
 
@@ -97,7 +97,7 @@ public class Viral {
         displayHashtags(allTopicHashtags);
     }
 
-    private void displayHashtags(Map<String, Integer> hashtagMap) {
+    private void displayHashtags(Map<String, Integer> hashtagMap) { //Method for displaying the list of hashtags,sorted
         List<Map.Entry<String, Integer>> sortedList = new ArrayList<>(hashtagMap.entrySet());
         sortedList.sort((a, b) -> b.getValue().compareTo(a.getValue()));
 
@@ -107,7 +107,7 @@ public class Viral {
         System.out.println("-----------");
     }
 
-    public void closeConnection() throws IOException, TimeoutException {
+    public void closeConnection() throws IOException, TimeoutException {//Method for stopping the connection with the server
         try {
             if (channel != null && channel.isOpen()) {
                 channel.close();

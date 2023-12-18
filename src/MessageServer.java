@@ -18,7 +18,7 @@ public class MessageServer {
         this.topic = new Topic(channel);
     }
 
-    private void initializeRabbitMQ() {
+    private void initializeRabbitMQ() {//Method for initializing the RabbitMQ server
         try {
             ConnectionFactory factory = new ConnectionFactory();
             factory.setHost("localhost");
@@ -41,7 +41,7 @@ public class MessageServer {
         return topic;
     }
 
-
+/*
     public void stop() { // Ensure to close RabbitMQ connection when the server is stopped
         try {
             if (channel != null && channel.isOpen()) {
@@ -53,5 +53,5 @@ public class MessageServer {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }

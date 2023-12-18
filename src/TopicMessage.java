@@ -4,7 +4,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class TopicMessage extends Message {
     private final String type;
-    private final Instant timestamp;
+    private final Instant timestamp;//current time when sending a message
     private final Duration ttl; // Time to live for the message
 
     public TopicMessage(String content,String header, String type, Duration ttl) {

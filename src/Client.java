@@ -20,7 +20,7 @@ public class Client {
         }
     }
 
-
+/*
     public void sendMessageToTopic(TopicMessage topicMessage) {
         topic.addMessage(topicMessage);
         System.out.println("Client sent message to topic: " + topicMessage.getContent());
@@ -44,5 +44,5 @@ public class Client {
         }
 
         return message;
-    }
+    }*/
 }
