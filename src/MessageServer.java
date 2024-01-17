@@ -22,8 +22,8 @@ public class MessageServer {
         try {
             ConnectionFactory factory = new ConnectionFactory();
             factory.setHost("localhost");
-            factory.setUsername("guest");
-            factory.setPassword("guest");
+            factory.setUsername("my_user");
+            factory.setPassword("my_password");
 
             this.connection = factory.newConnection();
             this.channel = connection.createChannel();
@@ -41,17 +41,4 @@ public class MessageServer {
         return topic;
     }
 
-/*
-    public void stop() { // Ensure to close RabbitMQ connection when the server is stopped
-        try {
-            if (channel != null && channel.isOpen()) {
-                channel.close();
-            }
-            if (connection != null && connection.isOpen()) {
-                connection.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
 }

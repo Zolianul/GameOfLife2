@@ -7,6 +7,8 @@ public class TopicMessage extends Message {
     private final Instant timestamp;//current time when sending a message
     private final Duration ttl; // Time to live for the message
 
+    private final ReentrantLock lock = new ReentrantLock();
+
     public TopicMessage(String content,String header, String type, Duration ttl) {
         super(content,header);
         this.type = type;
@@ -31,7 +33,6 @@ public class TopicMessage extends Message {
     public Duration getTtl() {
         return ttl;
     }
-    private final ReentrantLock lock = new ReentrantLock();
 
 
     public String getContent() {

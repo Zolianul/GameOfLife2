@@ -2,6 +2,7 @@ import com.rabbitmq.client.*;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.concurrent.TimeoutException;
@@ -16,14 +17,14 @@ public class Viral {
         try {
             ConnectionFactory factory = new ConnectionFactory();
             factory.setHost("localhost");
-            factory.setUsername("guest");
-            factory.setPassword("guest");
+            factory.setUsername("my_user");
+            factory.setPassword("my_password");
 
             connection = factory.newConnection();
             channel = connection.createChannel();
 
-            broadcastHashtags = new HashMap<>();
-            allTopicHashtags = new HashMap<>();
+            broadcastHashtags = new ConcurrentHashMap<>();
+            allTopicHashtags = new ConcurrentHashMap<>();
         } catch (IOException | TimeoutException e) {
             e.printStackTrace();
 
@@ -85,8 +86,7 @@ public class Viral {
 
         while (matcher.find()) {
             String hashtag = matcher.group(1);
-            hashtagMap.put(hashtag, hashtagMap.getOrDefault(hashtag, 0) + 1);
-        }
+            hashtagMap.compute(hashtag, (key, val) -> (val == null) ? 1 : val + 1);        }
     }
 
     public void displayTrendingHashtags() {

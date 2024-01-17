@@ -6,6 +6,7 @@ public class MessagingServerTest {
         testTopic(7,"Romania_Topic","Countries");// Test the Topic and TopicMessage functionality
         testTopic(17,"UPT_Topic","Faculties");
         testTopic(27,"CEBP_Topic","Courses");
+        System.out.println("\n\n");
         testMessageQueue(3,"Romania_Broadcast"); // Test the MessageQueue functionality
         testMessageQueue(5,"UPT_Broadcast");
         testMessageQueue(10,"CEBP_Broadcast");
